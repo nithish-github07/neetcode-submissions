@@ -1,0 +1,49 @@
+class Solution {
+    public String minWindow(String s, String t) {
+        if(t.length() > s.length()) return "";
+        int n = s.length();
+        int residx = -1;
+        int minLen = n + 1;
+        HashMap<Character,Integer> freq1 = new HashMap<>();
+        HashMap<Character,Integer> freq2 = new HashMap<>();
+        int resmatch = 0;
+        for(char ch: t.toCharArray()){
+            if(freq2.containsKey(ch)){
+                freq2.put(ch,freq2.get(ch) + 1);
+            }
+            else{
+                freq2.put(ch,1);
+                resmatch++;
+            }
+        }
+        int l = 0, matches = 0;
+        for(int r = 0; r < n; r++){
+            char ch = s.charAt(r);
+            freq1.put(ch,freq1.getOrDefault(ch,0) + 1);
+            if(freq2.containsKey(ch) && freq2.get(ch) == freq1.get(ch)){
+                matches++;
+            }
+            if(matches != resmatch) continue;
+            while(l <= r && matches == resmatch){
+                if((r-l+1) < minLen){
+                    minLen = r-l+1;
+                    residx = l;
+                }
+                char lch = s.charAt(l);
+                freq1.put(lch,freq1.get(lch)-1);
+                if(freq2.containsKey(lch) && freq2.get(lch) - 1 == freq1.get(lch)){
+                    matches--;
+                }
+                l++;
+
+            }
+            
+        }
+        if(residx == -1 || minLen == n + 1){
+            return "";
+        }
+        else{
+            return s.substring(residx , residx + minLen);
+        }
+    }
+}
